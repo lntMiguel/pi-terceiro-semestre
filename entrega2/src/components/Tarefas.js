@@ -32,21 +32,58 @@ function Tarefas() {
     setStatus("Não Iniciada"); // Reseta o status para o padrão
   };
 
-  const removerTarefa = ({tarefa}) => {
-    switch (tarefa.status) {
+  const removerTarefa = (id, status) => {
+    switch (status) {
+      case "Não Iniciada":
+        setListaNaoIniciada(listaNaoIniciada.filter(tarefa => tarefa.id !== id));
+        break;
+      case "Em Andamento":
+        setListaEmAndamento(listaEmAndamento.filter(tarefa => tarefa.id !== id));
+        break;
+      case "Concluída":
+        setListaConcluida(listaConcluida.filter(tarefa => tarefa.id !== id));
+        break;
+      default:
+        break;
+    }
+  }
+
+  const moveTarefa = (id, statusAtual, novoStatus) => {
+    let tarefaParaMover;
+    switch (statusAtual) {
+      case "Não Iniciada":
+        tarefaParaMover = listaNaoIniciada.find(tarefa => tarefa.id === id);
+        setListaNaoIniciada(listaNaoIniciada.filter(tarefa => tarefa.id !== id));
+        break;
+      case "Em Andamento":
+        tarefaParaMover = listaEmAndamento.find(tarefa => tarefa.id === id);
+        setListaEmAndamento(listaEmAndamento.filter(tarefa => tarefa.id !== id));
+        break;
+      case "Concluída":
+        tarefaParaMover = listaConcluida.find(tarefa => tarefa.id === id);
+        setListaConcluida(listaConcluida.filter(tarefa => tarefa.id !== id));
+        break;
+      default:
+        break;
+    }
+
+    if (tarefaParaMover) {
+      tarefaParaMover.status = novoStatus;
+      switch (novoStatus) {
         case "Não Iniciada":
-            setListaNaoIniciada([listaNaoIniciada.splice(tarefa.id, 1)])
+          setListaNaoIniciada([...listaNaoIniciada, tarefaParaMover]);
           break;
         case "Em Andamento":
-            setListaEmAndamento([listaEmAndamento.splice(tarefa.id, 1)])
+          setListaEmAndamento([...listaEmAndamento, tarefaParaMover]);
           break;
         case "Concluída":
-            setListaConcluida([listaConcluida.splice(tarefa.id, 1)])
+          setListaConcluida([...listaConcluida, tarefaParaMover]);
           break;
         default:
           break;
       }
-  }
+    }
+  };
 
   return (
     <>
@@ -56,12 +93,14 @@ function Tarefas() {
         <ul>
           {listaNaoIniciada.map((tarefa) => (
             <div key={tarefa.id}>
-                <li >{tarefa.titulo}</li>
-                <form id="remover">
-                    <button form="remover" type="button" onClick={removerTarefa({tarefa})}>
-                    Adicionar!
-                </button>
-                </form>
+              <li >
+                {tarefa.titulo}
+                <button
+                  type="button"
+                  onClick={() => removerTarefa(tarefa.id, tarefa.status)}>
+                  Remover Tarefa
+                </button> </li>
+
             </div>
           ))}
         </ul>
@@ -70,7 +109,16 @@ function Tarefas() {
 
         <ul>
           {listaEmAndamento.map((tarefa) => (
-            <li key={tarefa.id}>{tarefa.titulo}</li>
+            <div key={tarefa.id}>
+              <li >
+                {tarefa.titulo}
+                <button
+                  type="button"
+                  onClick={() => removerTarefa(tarefa.id, tarefa.status)}>
+                  Remover Tarefa
+                </button> </li>
+
+            </div>
           ))}
         </ul>
 
@@ -78,7 +126,16 @@ function Tarefas() {
 
         <ul>
           {listaConcluida.map((tarefa) => (
-            <li key={tarefa.id}>{tarefa.titulo}</li>
+            <div key={tarefa.id}>
+              <li >
+                {tarefa.titulo}
+                <button
+                  type="button"
+                  onClick={() => removerTarefa(tarefa.id, tarefa.status)}>
+                  Remover Tarefa
+                </button> </li>
+
+            </div>
           ))}
         </ul>
       </StyledLeftContainer>
